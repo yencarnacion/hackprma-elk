@@ -1,0 +1,4 @@
+---
+
+- include: step-03-destroy-ec2.yml
+- include: step-04-destroy-vpc.yml

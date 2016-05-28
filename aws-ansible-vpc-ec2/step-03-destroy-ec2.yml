@@ -1,0 +1,18 @@
+---
+- name: Delete ec2 resources
+  hosts: mqttserver
+  tasks:
+
+  - name: Gather EC2 facts
+    action: ec2_facts
+    register: ec2var
+
+  - debug: var=ec2var
+
+  - name: Terminate instances
+    ec2:
+      state: absent
+      instance_ids: "{{ ansible_ec2_instance_id }}"
+      region:  "us-east-1"
+      wait: True
+    delegate_to: 127.0.0.1

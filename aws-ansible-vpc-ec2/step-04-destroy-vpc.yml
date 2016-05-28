@@ -1,0 +1,42 @@
+---
+- name: Delete ec2 resources
+  hosts: localhost
+  tasks:
+
+  - ec2_vpc_net_facts:
+      region:  "us-east-1"
+      filters:
+        "tag:Name": vpc-iot
+    register: vpcvar
+
+  - debug: var=vpcvar
+
+  - debug: msg="{{vpcvar.vpcs[0].id}}"
+
+  - name: delete the iot security group 
+    ec2_group:
+      name: iot-group
+      vpc_id: "{{ vpcvar.vpcs[0].id }}"
+      description: "Development IOT Group"
+      region:  "us-east-1"
+      state: absent
+
+  - name: remove subnets and route tables from VPC
+    local_action:
+      module: ec2_vpc
+      vpc_id: "{{ vpcvar.vpcs[0].id }}"
+      resource_tags: '{"Name":"vpc-iot"}'
+      region:  "us-east-1"
+      state: present
+      subnets: []
+      internet_gateway: False
+      route_tables: []
+      wait: yes
+
+  - name: delete vpc
+    ec2_vpc:
+      vpc_id: "{{vpcvar.vpcs[0].id}}"
+      resource_tags: '{"Name":"vpc-iot"}'
+      state: absent
+      region:  "us-east-1"
+      wait: yes

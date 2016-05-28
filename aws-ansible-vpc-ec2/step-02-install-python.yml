@@ -1,0 +1,69 @@
+---
+- name: Install python 2.7 on servers
+  hosts: "{{ inventory_dns_fact | default('mqttserver') }}"  #mqttserver
+  gather_facts: False
+  tasks:
+#  - meta: refresh_inventory
+
+  - name: stop until inventory has dns
+    raw: ./inventory/ec2.py --refresh-cache | ~/Dropbox/bin/jq '._meta.hostvars[] | select(.ec2_tag_Name | contains("mqttserver01"))' | ~/Dropbox/bin/jq '.ec2_public_dns_name' | sed 's/\"//g'
+    register: inventory_dns
+    until: inventory_dns.stdout.find("amazonaws.com") != -1
+    retries: 10
+    delay: 60
+    ignore_errors: true
+    delegate_to: 127.0.0.1
+
+  - debug: var=inventory_dns
+
+  - set_fact:
+     inventory_dns_fact: "{{ inventory_dns.stdout_lines[0] }}"
+
+  - debug: var=ansible_ssh_host
+
+  - debug: var=inventory_hostname
+  - debug: var=hostvars[ansible_ssh_host]
+  - debug: var=hostvars[inventory_hostname]
+  - debug: var=hostvars[inventory_hostname].ec2_public_dns_name
+
+  - set_fact:
+     ssh_enabled_fact: false
+
+  - name: Test for ssh 1
+    raw: ssh -o ServerAliveInterval=10 -o ServerAliveCountMax=0 -o TCPKeepAlive=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -i /Users/yamir/.ssh/yencarnacion.pem ubuntu@{{ inventory_dns_fact | default(inventory_hostname) }} "echo success" > >(tee /tmp/stdout.log) 2> >(tee /tmp/stderr.log >&2)
+    args:
+      executable: /bin/bash
+    register: ssh_enabled
+    delegate_to: 127.0.0.1
+    ignore_errors: true
+
+  - set_fact:
+     ssh_enabled_fact: true
+    when: ssh_enabled.stdout.find("success") != -1
+
+  - debug: var=ssh_enabled
+    delegate_to: 127.0.0.1
+
+  - name: fail with error ssh message
+    fail: msg="ssh command failed"
+    when: ssh_enabled_fact == false and "'FAILED' in ssh_enabled.stderr"
+    delegate_to: 127.0.0.1
+
+  - name: Wait 1 minute for stable ssh
+    pause: minutes=1
+    delegate_to: 127.0.0.1
+
+#    until: ssh_enabled.stdout.find("success") != -1
+#    retries: 10
+#    delay: 60
+
+  - debug: msg="{{ssh_enabled}}"
+
+#  - raw: apt-get update; apt-get install -y python2.7 python-simplejson
+  - raw: ssh -o ServerAliveInterval=300 -o ServerAliveCountMax=0 -o TCPKeepAlive=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -i /Users/yamir/.ssh/yencarnacion.pem ubuntu@{{ inventory_dns_fact | default(inventory_hostname) }} "sudo apt-get update; sudo apt-get install -y python2.7 python-simplejson" > >(tee /tmp/stdout2.log) 2> >(tee /tmp/stderr2.log >&2)
+    args:
+      executable: /bin/bash
+    delegate_to: 127.0.0.1
+
+  - debug: var=result
+

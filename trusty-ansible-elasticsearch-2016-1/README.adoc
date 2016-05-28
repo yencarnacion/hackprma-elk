@@ -1,0 +1,20 @@
+== vagrant-ansible-elasticsearch
+Provision a 1 node elasticsearch AWS node using Ansible
+
+=== Notes
+Uses the official Ansible role for Elasticsearch
+
+=== Other
+Kibana is also installed.
+
+=== How to run
+.To get this project working, perform the minimum steps:
+----
+ $ ansible-playbook elastic.yml
+----
+
+The node will be running on: dashboardpr.com
+
+To test kibana is up visit http://dashboardpr.com:5601/   
+
+

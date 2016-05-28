@@ -1,0 +1,4 @@
+---
+
+- include: ./step-01-boot-ec2.yml
+- include: ./step-02-install-python.yml

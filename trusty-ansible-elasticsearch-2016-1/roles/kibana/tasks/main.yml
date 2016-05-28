@@ -1,0 +1,26 @@
+---
+- name: Add Kibana repository
+  apt_repository:
+    repo: 'deb http://packages.elastic.co/kibana/4.5/debian stable main'
+    state: present
+    update_cache: yes
+
+- name: Install Kibana.
+  apt: pkg=kibana state=present
+
+- name: Configure Kibana to automatically start during bootup
+  shell: update-rc.d kibana defaults 95 10
+
+- name: Configure Kibana
+  lineinfile: >
+    dest=/opt/kibana/config/kibana.yml
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  with_items:
+     - { regexp: 'server\.host', line: 'server.host: 0.0.0.0' }
+     - { regexp: 'elasticsearch\.url:', line: 'elasticsearch.url: "http://127.0.0.1:9200" ' }
+  notify: restart elasticsearch
+
+- name: Start Kibana
+  service: name=kibana state=started enabled=yes

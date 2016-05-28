@@ -1,0 +1,38 @@
+---
+- name: Set up static ip for instance
+  hosts: mqttserver
+  tasks:
+
+  - name: Gather EC2 facts
+    action: ec2_facts
+    register: ec2var
+
+  - debug: var=ec2var
+
+  - name: allocate a new elastic IP without associating it to anything
+    action: ec2_eip region="us-east-1" in_vpc=yes
+    register: eip
+    delegate_to: 127.0.0.1
+
+  - name: output the IP
+    debug: msg="Allocated IP is {{ eip.public_ip }}"
+
+  - name: output the IP
+    debug: msg="Allocated IP data {{ eip }}"
+
+  - name: allocate a new elastic IP and associate it with an instance
+    ec2_eip: 
+       device_id="{{ ansible_ec2_instance_id }}" ip="{{ eip.public_ip }}"
+       in_vpc=yes region="us-east-1"
+    delegate_to: 127.0.0.1
+
+  - name: output the IP
+    debug: msg="Allocated IP is {{ eip.public_ip }}"
+
+  - local_action: dnsimple domain=dashboardpr.com record= type=A value="{{ eip.public_ip}} state=present
+    register: record
+
+  - name: DNSimple Record
+    debug: msg="DNSimple Record {{ record }}"
+
+

@@ -1,0 +1,24 @@
+---
+- name: Elasticsearch with custom configuration
+  hosts: elastic01
+  become: yes
+  become_user: root
+  pre_tasks:
+    - name: Gather EC2 facts
+      action: ec2_facts
+      register: ec2var
+  roles:
+    - { role: ansible-elasticsearch, es_instance_name: "elastic01",
+    es_config: {
+          network.host: "127.0.0.1"
+      }
+      } 
+    - role: kibana
+  vars:
+    es_version: 2.3.1
+    es_scripts: false
+    es_plugins:
+        - plugin: license
+        - plugin: marvel-agent
+        - plugin: elasticsearch/watcher/latest
+    es_plugins_reinstall: true
