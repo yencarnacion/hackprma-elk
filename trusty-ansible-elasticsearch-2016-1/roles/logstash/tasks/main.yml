@@ -1,0 +1,22 @@
+---
+- name: Download logstash
+  command: wget https://download.elastic.co/logstash/logstash/logstash-2.3.2.tar.gz 
+
+- name: Untar/uncompress logstash
+  shell: tar xfz logstash-2.3.2.tar.gz
+  args:
+    chdir: /home/ubuntu
+
+- name: Configure logstash 
+  template: src=logstash.conf.j2
+            dest=/home/ubuntu/logstash.conf
+            mode=0664
+            owner=ubuntu group=ubuntu
+
+- name: Copy twitter logstash conf job to upstart directory
+  template: src=twitter.conf.j2
+            dest=/etc/init/twitter.conf
+            mode=0644
+
+- name: Start twitter.
+  command: start twitter

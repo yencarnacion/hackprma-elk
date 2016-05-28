@@ -10,8 +10,7 @@ console log
 setuid ubuntu
 setgid ubuntu
 
-env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
-:/usr/local/games
+env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 env HOME=/home/ubuntu
 
 exec /home/ubuntu/logstash-2.3.2/bin/logstash -f /home/ubuntu/logstash.conf 

@@ -1,6 +1,8 @@
 ---
 - name: Elasticsearch with custom configuration
   hosts: elastic01
+  vars_files:
+    - secrets.yml
   become: yes
   become_user: root
   pre_tasks:
@@ -14,6 +16,7 @@
       }
       } 
     - role: kibana
+    - role: logstash
   vars:
     es_version: 2.3.1
     es_scripts: false

@@ -1,0 +1,21 @@
+# http://david.pilato.fr/blog/2015/06/01/indexing-twitter-with-logstash-and-elasticsearch/
+input {
+  twitter {
+      consumer_key => "{{ consumer_key }}"
+      consumer_secret => "{{consumer_secret}}"
+      oauth_token => "{{oauth_token}}"
+      oauth_token_secret => "{{oauth_token_secret}}"
+      keywords => [ "industrialespr", "Camarapr" , "educacionpr", "prsciencetrust", "fomentopridco", "rcmupr", "h3conference", "piloto151", "sagradoedu", "uprcayey", "interpuertorico", "pr_itcluster", "pilotolabs", "code4puertorico", "makerspacepr", "engineeringuprm", "1millioncupspr", "hackpuertorico", "prfomento", "grupoguayacan", "hackprma", "RRossello2016", "ricardorossello", "Rossello_2016", "pedropierluisi", "pierluisipnp", "DavidBernierPR", "AlexandraLugaro", "MCidre", "marialourdespip", "BernabePPT", "PPTPR"]
+      full_tweet => true
+  }
+}
+
+output {
+  #stdout { codec => dots }
+  elasticsearch {
+    index => "twitter"
+    document_type => "tweet"
+    #template => "/home/ubuntu/twitter_template.json"
+    #template_name => "twitter"
+  }
+}

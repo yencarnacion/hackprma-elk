@@ -1,2 +1,4 @@
 .vagrant
 README.html
+secrets.yml
+*.retry
