@@ -1,0 +1,27 @@
+== hackprma-elk Project Dependencies
+
+=== What you need to run on OSX
+.Download and install the following:
+* install ansible (see instructions below)
+* install boto
+* Amazon AWS account
+* (optional) account with dnsimple.com (if you want to programmatically configure DNS)
+
+.Install Ansible (on OSX)
+----
+$ sudo easy_install pip
+$ sudo pip install ansible
+----
+
+.Install boto (on OSX)
+----
+$ pip install boto
+----
+
+.Also you need some environment variables (put these in your .bash_profile)
+----
+export AWS_ACCESS_KEY_ID=<your_key>
+export AWS_SECRET_ACCESS_KEY=<your_key>
+export DNSIMPLE_EMAIL=<your_email>
+export DNSIMPLE_API_TOKEN=<your_token>
+----

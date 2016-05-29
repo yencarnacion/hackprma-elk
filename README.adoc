@@ -1,0 +1,61 @@
+== Project for setting up a node running the ELK stack on Amazon AWS
+.These files include the scripts for provisioning a node running Elasticsearch Logstash Kibana (ELK) on Amazon AWS.
+
+=== What is needed to run the program
+See DEPENDENCIES.adoc.
+
+=== License
+   Copyright 2016 Yamir Encarnación <yencarnacion@webninjapr.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+=== Procedure 
+
+* Clone the repo
+----
+    $ git clone https://github.com/yencarnacion/hackprma-elk
+    $ cd hackprma-elk
+----
+
+* Bring up the node (NOTE: This will cost your $$$ (i.e. money))
+----
+   $ cd aws-ansible-vpc-ec2/
+   $ ansible-playbook startmeup.yml
+----
+
+* if you want to set up DNS associated with a domain
+----
+  open with your favorite editor getstaticip.yml
+  find the line below:
+  - local_action: dnsimple domain=dashboardpr.com record= type=A value="{{ eip.public_ip}} state=present
+  change dashboardpr.com to your domain
+  run $ ansible-playbook getstaticip.yml
+----
+
+* provision the ELK node
+----
+  $ cd ../trusty-ansible-elasticsearch-2016-1
+  - change the line private_key_file = ~/.ssh/yencarnacion.pem in ansible.cfg
+  - change the ansible_host in the inventory/hosts file
+  - copy secrets_blank.yml to secrets.yml and populate the fields in the file 
+    with your Twitter credentials
+  - run:
+  $ ansible-playbook elastic.yml
+----
+To see results point your browser to http://<your_domain_or_ip_on_aws>:5601/ +
+
+A presentation associated with this project can be found at http://yencarnacion.github.io/hackprma-elk[http://yencarnacion.github.io/hackprma-elk]
+
+Related: +
+- http://david.pilato.fr/blog/2015/06/01/indexing-twitter-with-logstash-and-elasticsearch/[http://david.pilato.fr/blog/2015/06/01/indexing-twitter-with-logstash-and-elasticsearch/] +
+- https://github.com/elastic/examples/tree/master/ELK_twitter[https://github.com/elastic/examples/tree/master/ELK_twitter] +
