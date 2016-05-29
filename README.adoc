@@ -59,3 +59,14 @@ A presentation associated with this project can be found at http://yencarnacion.
 Related: +
 - http://david.pilato.fr/blog/2015/06/01/indexing-twitter-with-logstash-and-elasticsearch/[http://david.pilato.fr/blog/2015/06/01/indexing-twitter-with-logstash-and-elasticsearch/] +
 - https://github.com/elastic/examples/tree/master/ELK_twitter[https://github.com/elastic/examples/tree/master/ELK_twitter] +
+
+Sample Queries: +
+user.screen_name:(RRossello2016 OR ricardorossello OR Rossello_2016) +
+user.screen_name:(pedropierluisi OR pierluisipnp) +
+user.screen_name:DavidBernierPR +
+user.screen_name:AlexandraLugaro +
+user.screen_name:MCidre +
+user.screen_name:marialourdespip +
+user.screen_name:BernabePPT +
+user.screen_name:PPTPR +
+
